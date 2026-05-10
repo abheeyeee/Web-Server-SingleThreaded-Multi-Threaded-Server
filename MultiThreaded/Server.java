@@ -6,32 +6,33 @@ import java.io.IOException;
 
 public class Server {
 
-    public Consumer<Socket> getConsumer(){
-        return (clientSocket)->{
-            try{
-                PrintWriter  toClient = new PrintWriter(clientSocket.getOutputStream());
+    public Consumer<Socket> getConsumer() {
+        return (clientSocket) -> {
+            try {
+                PrintWriter toClient = new PrintWriter(clientSocket.getOutputStream());
                 toClient.println("Hello from server");
                 toClient.close();
                 clientSocket.close();
-            }catch (IOException ex){
+            } catch (IOException ex) {
                 ex.printStackTrace();
             }
         };
     }
-    public static void main(String []args){
+
+    public static void main(String[] args) {
         int port = 8010;
         Server server = new Server();
 
-        try{
+        try {
             ServerSocket serverSocket = new ServerSocket(port);
             serverSocket.setSoTimeout(10000);
             System.out.println("Server is listening on port " + port);
-            while(true){
+            while (true) {
                 Socket acceptedSocket = serverSocket.accept();
-                Thread thread = new Thread(()->server.getConsumer().accept(acceptedSocket));
+                Thread thread = new Thread(() -> server.getConsumer().accept(acceptedSocket));
                 thread.start();
             }
-        }catch(IOException ex){
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
